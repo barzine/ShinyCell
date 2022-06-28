@@ -39,7 +39,7 @@
 #' @param default.gene1 specify primary default gene to show
 #' @param default.gene2 specify secondary default gene to show
 #' @param default.multigene character vector specifying default genes to 
-#'   show in bubbleplot / heatmap
+#'   show in dotplot / heatmap
 #' @param default.dimred character vector specifying the two default dimension 
 #'   reductions. Default is to use UMAP if not TSNE embeddings
 #' @param chunkSize number of genes written to h5file at any one time. Lower 
