@@ -15,7 +15,7 @@ wrLib <- function(lib) {
 
 #' Write code for loading objects for server.R
 #'
-#' @param prefix file prefix 
+#' @param prefix file prefix
 #'
 #' @rdname wrSVload
 #' @export wrSVload
@@ -88,18 +88,18 @@ wrSVfix <- function() {
              '### Common plotting functions \n',
              '# Plot cell information on dimred \n',
              'scDRcell <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1, inpsub2, \n',
-             '                     inpsiz, inpcol, inpord, inpfsz, inpasp, inptxt, inplab, inpsplit){{ \n',
+             '                     inpsiz, inpcol, inpord, inpfsz, inpasp, inptxt, inplab, inpsplit=FALSE, inpsplitgrp){{ \n',
              '  if(is.null(inpsub1)){{inpsub1 = inpConf$UI[1]}} \n',
              '  # Prepare ggData \n',
-             '  if(is.null(inpsplit)) {{ \n',
+             '  if(!inpsplit) {{ \n',
              '    ggData = inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, \n',
              '                         inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID), \n',
              '                    with = FALSE] \n',
              '    colnames(ggData) = c("X", "Y", "val", "sub") \n',
              '  }}else{{ \n',
-             '    ggData = inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, \n', 
+             '    ggData = inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, \n',
              '             inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID, \n',
-             '             inpConf[UI == inpsplit]$ID), \n',  
+             '             inpConf[UI == inpsplitgrp]$ID), \n',
              '                    with = FALSE] \n',
              '    colnames(ggData) = c("X", "Y", "val", "sub","split") \n',
              '  }} \n',
@@ -161,14 +161,14 @@ wrSVfix <- function() {
              '  }} else if(inpasp == "Fixed") {{ \n',
              '    ggOut = ggOut + coord_fixed() \n',
              '  }} \n',
-             '  if(!is.null(inpsplit){{ \n',
+             '  if(inpsplit){{ \n',
              '    ggOut = ggOut + facet_wrap(~ split) \n',
              '  }} \n',
              '  return(ggOut) \n',
              '}} \n',
              ' \n',
              'scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2, \n',
-             '                    inpH5, inpGene, inpsplt){{ \n', 
+             '                    inpH5, inpGene, inpsplt){{ \n',
              '  if(is.null(inpsub1)){{inpsub1 = inpConf$UI[1]}} \n',
              '  # Prepare ggData \n',
              '  ggData = inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID), \n',
@@ -185,8 +185,8 @@ wrSVfix <- function() {
              '  \n',
              '  # Split inp1 if necessary \n',
              '  if(is.na(inpConf[UI == inp1]$fCL)){{ \n',
-             '    if(inpsplt == "Quartile"){{nBk = 4}} \n', 
-             '    if(inpsplt == "Decile"){{nBk = 10}} \n', 
+             '    if(inpsplt == "Quartile"){{nBk = 4}} \n',
+             '    if(inpsplt == "Decile"){{nBk = 10}} \n',
              '    ggData$group = cut(ggData$group, breaks = nBk) \n',
              '  }} \n',
              '  \n',
@@ -659,7 +659,7 @@ wrSVfix <- function() {
 
 #' Write code for main block of server.R
 #'
-#' @param prefix file prefix 
+#' @param prefix file prefix
 #'
 #' @rdname wrSVmain
 #' @export wrSVmain
@@ -695,9 +695,9 @@ wrSVmain <- function(prefix, subst = "") {
              '{subst}                       choices = sub, selected = sub) \n',
              '{subst}  }}) \n',
              '{subst}  output${prefix}a1sub1Cond.ui <- renderUI({{ \n',
-             '{subst}    selectInput({prefix}a1condGrp, "Split by following cell information:", \n',
+             '{subst}    selectInput("{prefix}a1sub1condGrp", "Split by following cell information:", \n',
              '{subst}                choices = {prefix}conf[grp == TRUE]$UI, \n',
-             '{subst}                 selected = {prefix}def$grp1), \n',
+             '{subst}                selected = NULL) \n',
              '{subst}  }}) \n',
              '{subst}  observeEvent(input${prefix}a1sub1non, {{ \n',
              '{subst}    sub = strsplit({prefix}conf[UI == input${prefix}a1sub1]$fID, "\\\\|")[[1]] \n',
@@ -713,7 +713,7 @@ wrSVmain <- function(prefix, subst = "") {
              '    scDRcell({prefix}conf, {prefix}meta, input${prefix}a1drX, input${prefix}a1drY, input${prefix}a1inp1,  \n',
              '             input${prefix}a1sub1, input${prefix}a1sub2, \n',
              '             input${prefix}a1siz, input${prefix}a1col1, input${prefix}a1ord1, \n',
-             '             input${prefix}a1fsz, input${prefix}a1asp, input${prefix}a1txt, input${prefix}a1lab1, input${prefix}a1condGrp) \n',
+             '             input${prefix}a1fsz, input${prefix}a1asp, input${prefix}a1txt, input${prefix}a1lab1,input${prefix}a1sub1cond, input${prefix}a1sub1condGrp) \n',
              '  }}) \n',
              '  output${prefix}a1oup1.ui <- renderUI({{ \n',
              '    plotOutput("{prefix}a1oup1", height = pList[input${prefix}a1psz]) \n',
@@ -1296,7 +1296,7 @@ wrUImain <- function(prefix, subst = "", ptsiz = "1.25") {
              '        6{subst}, actionButton("{prefix}a1togCond", "Toggle controls for splitting"), \n',
              '{subst}        conditionalPanel( \n',
              '{subst}          condition = "input.{prefix}a1togCond % 2 == 1", \n',
-             '{subst}          checkboxInput("{prefix}a1sub1cond", "Cell information used for the splitting:",FALSE), \n',
+             '{subst}          checkboxInput("{prefix}a1sub1cond", "Split plots based on cell information",FALSE), \n',
              '{subst}          conditionalPanel( \n',
              '{subst}             condition = "input.{prefix}a1sub1cond % 2 == 1", uiOutput("{prefix}a1sub1Cond.ui")) \n',
              '{subst}        ) \n',
