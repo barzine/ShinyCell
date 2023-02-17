@@ -1,4 +1,7 @@
 # ShinyCell package
+
+*This is a modified version that allows to split by condition as well.*
+
 `ShinyCell` is a R package that allows users to create interactive Shiny-based 
 web applications to visualise single-cell data via (i) visualising cell 
 information and/or gene expression on reduced dimensions e.g. UMAP, (ii) 
