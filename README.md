@@ -109,9 +109,9 @@ newPkg = reqPkg[!(reqPkg %in% installed.packages()[,"Package"])]
 if(length(newPkg)){install.packages(newPkg)}
 ```
 
-`ShinyCell` can then be installed from GitHub as follows:
+This version of `ShinyCell` can then be installed from GitHub as follows:
 ``` r
-devtools::install_github("SGDDNB/ShinyCell")
+devtools::install_github("barzine/ShinyCell")
 ```
 
 
